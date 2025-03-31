@@ -1,0 +1,39 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Jewelry Store System
+
+Person(customer, "Customer", "External user interacting with the system")
+Person(seller, "Seller", "Operates the system, confirms manufacturing")
+Person(api_user, "API User", "External system interacting via API")
+Person(operator, "Operator", "Manages orders and manufacturing process")
+
+Container(internet_shop, "Internet Shop", "Varnish, TypeScript, Threed", "Allows users to make orders based on 3D models, view history, perform searches")
+Container(shop_api, "Shop API", "SpringBoot", "Provides search functionality for orders based on various parameters")
+Container(shop_db, "Shop Database", "PostgreSQL", "Stores information about manufacturers and orders")
+
+Container(crm, "CRM System", "Varnish, TypeScript", "Manages customer relations responsibilities")
+Container(crm_api, "CRM API", "SpringBoot", "Handles CRM operations")
+Container(message_queue, "Message Queue", "RabbitMQ", "Processes messages about new orders, status updates, or notifications")
+
+Container(mes_api, "MES API", "C#", "Handles task assignments to workers and MES operations")
+Container(mes, "MES System", "React, TypeScript", "Displays order status, manages workers and assignments")
+Container(mes_db, "MES Database", "PostgreSQL", "Stores detailed information on orders, designs, and assignments")
+
+Container(files_3d_storage, "Shared 3D File Storage", "Shared storage", "Stores 3D files for calculations")
+
+Rel(customer, internet_shop, "Places orders")
+Rel(internet_shop, shop_api, "Uploads files")
+Rel(shop_api, shop_db, "Stores data")
+Rel(seller, crm, "Uses the system")
+Rel(crm, crm_api, "CRM operations")
+Rel(crm_api, message_queue, "Message processing")
+Rel(api_user, mes_api, "Interacts with API")
+Rel(mes_api, mes_db, "Writes data")
+Rel(operator, mes, "Uses MES system")
+Rel(mes, mes_db, "Reads and updates data")
+Rel(mes_api, files_3d_storage, "Accesses files")
+Rel(files_3d_storage, mes_db, "Serves file data")
+
+@enduml
